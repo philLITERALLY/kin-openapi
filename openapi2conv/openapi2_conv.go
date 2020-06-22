@@ -15,6 +15,8 @@ import (
 func ToV3Swagger(swagger *openapi2.Swagger) (*openapi3.Swagger, error) {
 	stripNonCustomExtensions(swagger.Extensions)
 
+	fmt.Printf("YOOOHOOO")
+
 	result := &openapi3.Swagger{
 		OpenAPI:        "3.0.2",
 		Info:           &swagger.Info,
