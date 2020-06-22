@@ -13,6 +13,9 @@ import (
 
 // ToV3Swagger converts an OpenAPIv2 spec to an OpenAPIv3 spec
 func ToV3Swagger(swagger *openapi2.Swagger) (*openapi3.Swagger, error) {
+
+	fmt.Printf("\n\n\n YEOOOOOOO \n\n\n")
+
 	stripNonCustomExtensions(swagger.Extensions)
 
 	result := &openapi3.Swagger{
