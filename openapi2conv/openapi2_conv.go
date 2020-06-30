@@ -172,7 +172,21 @@ func ToV3Parameter(parameter *openapi2.Parameter) (*openapi3.ParameterRef, *open
 	}
 	stripNonCustomExtensions(parameter.Extensions)
 	in := parameter.In
-	if in == "body" || in == "formData" {
+	if in == "body" {
+		result := &openapi3.RequestBody{
+			Description:    parameter.Description,
+			Required:       parameter.Required,
+			ExtensionProps: parameter.ExtensionProps,
+		}
+		if schemaRef := parameter.Schema; schemaRef != nil {
+			// Assume it's JSON
+			result.WithJSONSchemaRef(ToV3SchemaRef(schemaRef))
+		}
+		return nil, &openapi3.RequestBodyRef{
+			Value: result,
+		}, nil
+	}
+	if in == "formData" {
 		fmt.Printf("\n\n\n FORMDATA? %s \n\n\n", in)
 		result := &openapi3.RequestBody{
 			Description:    parameter.Description,
@@ -181,24 +195,11 @@ func ToV3Parameter(parameter *openapi2.Parameter) (*openapi3.ParameterRef, *open
 		}
 		if schemaRef := parameter.Schema; schemaRef != nil {
 			// Assume it's JSON
-			result.WithJSONSchemaRef(ToV3SchemaRef(schemaRef))
+			result.WithContent(openapi3.Content{
+				"multipart/form-data": openapi3.NewMediaType().WithSchemaRef(schemaRef),
+			})
 		}
-		fmt.Printf("\n\n\n result? %s \n\n\n", result)
-		return nil, &openapi3.RequestBodyRef{
-			Value: result,
-		}, nil
-	}
-	if in == "formData" {
-		fmt.Printf("\n\n\n FORMDATA \n\n\n")
-		result := &openapi3.RequestBody{
-			Description:    parameter.Description,
-			Required:       parameter.Required,
-			ExtensionProps: parameter.ExtensionProps,
-		}
-		if schemaRef := parameter.Schema; schemaRef != nil {
-			// Assume it's JSON
-			result.WithJSONSchemaRef(ToV3SchemaRef(schemaRef))
-		}
+		fmt.Printf("\n\n\n result? %v \n\n\n", result)
 		return nil, &openapi3.RequestBodyRef{
 			Value: result,
 		}, nil
