@@ -194,6 +194,11 @@ func ToV3Parameter(parameter *openapi2.Parameter) (*openapi3.ParameterRef, *open
 			ExtensionProps: parameter.ExtensionProps,
 		}
 		if schemaRef := parameter.Schema; schemaRef != nil {
+			fmt.Printf("\n\n\n 1 %v \n\n\n", openapi3.NewMediaType())
+			fmt.Printf("\n\n\n 2 %v \n\n\n", openapi3.NewMediaType().WithSchemaRef(schemaRef))
+			fmt.Printf("\n\n\n 3 %v \n\n\n", openapi3.Content{
+				"multipart/form-data": openapi3.NewMediaType().WithSchemaRef(schemaRef),
+			})
 			// Assume it's JSON
 			result.WithContent(openapi3.Content{
 				"multipart/form-data": openapi3.NewMediaType().WithSchemaRef(schemaRef),
