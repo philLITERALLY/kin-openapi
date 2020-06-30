@@ -65,9 +65,12 @@ func ToV3Swagger(swagger *openapi2.Swagger) (*openapi3.Swagger, error) {
 				result.Components.Parameters[k] = resultParameter
 			}
 			if resultRequestBody != nil {
+				fmt.Printf("\n\n k: %v \n\n", k)
+				fmt.Printf("\n\n resultRequestBody: %v \n\n", resultRequestBody)
 				result.Components.RequestBodies[k] = resultRequestBody
 			}
 		}
+		fmt.Printf("\n\n result.Components.RequestBodies: %v \n\n", result.Components.RequestBodies)
 	}
 	if responses := swagger.Responses; responses != nil {
 		result.Components.Responses = make(map[string]*openapi3.ResponseRef, len(responses))
