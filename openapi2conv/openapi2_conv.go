@@ -15,8 +15,6 @@ import (
 func ToV3Swagger(swagger *openapi2.Swagger) (*openapi3.Swagger, error) {
 	stripNonCustomExtensions(swagger.Extensions)
 
-	fmt.Printf("YOOOHOOO")
-
 	result := &openapi3.Swagger{
 		OpenAPI:        "3.0.2",
 		Info:           &swagger.Info,
@@ -174,7 +172,24 @@ func ToV3Parameter(parameter *openapi2.Parameter) (*openapi3.ParameterRef, *open
 	}
 	stripNonCustomExtensions(parameter.Extensions)
 	in := parameter.In
-	if in == "body" {
+	if in == "body" || in == "formData" {
+		fmt.Printf("\n\n\n FORMDATA? %s \n\n\n", in)
+		result := &openapi3.RequestBody{
+			Description:    parameter.Description,
+			Required:       parameter.Required,
+			ExtensionProps: parameter.ExtensionProps,
+		}
+		if schemaRef := parameter.Schema; schemaRef != nil {
+			// Assume it's JSON
+			result.WithJSONSchemaRef(ToV3SchemaRef(schemaRef))
+		}
+		fmt.Printf("\n\n\n result? %s \n\n\n", result)
+		return nil, &openapi3.RequestBodyRef{
+			Value: result,
+		}, nil
+	}
+	if in == "formData" {
+		fmt.Printf("\n\n\n FORMDATA \n\n\n")
 		result := &openapi3.RequestBody{
 			Description:    parameter.Description,
 			Required:       parameter.Required,
